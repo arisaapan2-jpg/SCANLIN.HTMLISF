@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkGuard Scanner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: system-ui, sans-serif; }
+    .scan-result { transition: all 0.4s; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+
+  <div class="max-w-lg mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-2">🔍 LinkGuard Scanner</h1>
+    <p class="text-center text-gray-400 mb-8">Cek keamanan link & file secara online</p>
+
+    <!-- Input -->
+    <div class="bg-gray-800 rounded-2xl p-6 shadow-xl">
+      <div class="mb-4">
+        <label class="block text-sm mb-2">Masukkan URL / Link</label>
+        <input type="text" id="urlInput" 
+               class="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500"
+               placeholder="https://contoh.com/file.exe">
+      </div>
+
+      <button onclick="scanURL()" 
+              class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-2">
+        <i class="fas fa-shield-alt"></i>
+        SCAN SEKARANG
+      </button>
+    </div>
+
+    <!-- Hasil -->
+    <div id="result" class="mt-8 hidden scan-result"></div>
+
+    <!-- Info -->
+    <div class="mt-10 text-xs text-gray-500 text-center">
+      <p>Demo Scanner • Menggunakan simulasi + deteksi sederhana</p>
+      <p class="mt-1">Untuk scan asli bisa ditambahkan API VirusTotal nanti</p>
+    </div>
+  </div>
+
+  <script>
+    async function scanURL() {
+      const input = document.getElementById('urlInput');
+      const url = input.value.trim();
+      const resultDiv = document.getElementById('result');
+
+      if (!url) {
+        alert("Masukkan URL dulu bro!");
+        return;
+      }
+
+      resultDiv.classList.remove('hidden');
+      resultDiv.innerHTML = `
+        <div class="bg-gray-800 rounded-2xl p-6 text-center">
+          <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
+          <p class="text-lg">Sedang memindai...</p>
+        </div>
+      `;
+
+      // Simulasi scanning (delay 2 detik)
+      await new Promise(r => setTimeout(r, 1800));
+
+      // Logika simulasi sederhana
+      let isSafe = !url.includes("virus") && !url.includes("crack") && 
+                   !url.includes("hack") && !url.includes(".exe") && 
+                   Math.random() > 0.3;
+
+      if (isSafe) {
+        resultDiv.innerHTML = `
+          <div class="bg-green-900 border border-green-500 rounded-2xl p-6 scan-result">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-4xl">✅</div>
+              <div>
+                <h2 class="text-2xl font-bold text-green-400">AMAN</h2>
+                <p class="text-green-300">Link ini dinilai aman</p>
+              </div>
+            </div>
+            <div class="mt-6 bg-gray-900 rounded-xl p-4 text-sm">
+              <p><strong>Status:</strong> <span class="text-green-400">✅ Clean</span></p>
+              <p><strong>Risiko:</strong> Rendah</p>
+              <p><strong>Deteksi:</strong> Tidak ada malware, phishing, atau konten berbahaya</p>
+              <p class="mt-2 text-gray-400">Domain: ${new URL(url).hostname}</p>
+            </div>
+          </div>
+        `;
+      } else {
+        resultDiv.innerHTML = `
+          <div class="bg-red-900 border border-red-500 rounded-2xl p-6 scan-result">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-4xl">⚠️</div>
+              <div>
+                <h2 class="text-2xl font-bold text-red-400">BERBAHAYA</h2>
+                <p class="text-red-300">Link ini berisiko tinggi</p>
+              </div>
+            </div>
+            <div class="mt-6 bg-gray-900 rounded-xl p-4 text-sm space-y-2">
+              <p><strong>Status:</strong> <span class="text-red-400">❌ Berbahaya</span></p>
+              <p><strong>Ancaman:</strong> Malware / Phishing / Trojan</p>
+              <p><strong>Saran:</strong> Jangan buka link ini!</p>
+              <p class="text-gray-400">Kami mendeteksi pola yang sering digunakan untuk penipuan</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Tekan Enter juga bisa scan
+    document.getElementById('urlInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') scanURL();
+    });
+  </script>
+
+</body>
+</html>
